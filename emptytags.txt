@@ -1,0 +1,14 @@
+area
+base
+basefont
+br
+col
+frame
+hr
+img
+input
+isindex
+link
+meta
+param
+source

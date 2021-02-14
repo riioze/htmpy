@@ -1,5 +1,11 @@
 
 
+
+with open('emptytags.txt','r') as etagfile:
+	ETAGLIST = etagfile.read()
+	ETAGLIST = ETAGLIST.split('\n')
+
+
 class tag:
 	"""tag element"""
 	def __init__(self,_type,attributes={}):
@@ -8,6 +14,9 @@ class tag:
 		_type corresponds to the tag name"""
 		self.attributes = attributes
 		self.type = _type
+		self.emptytag = False
+		if self.type in ETAGLIST:
+			self.emptytag=True
 		self.children = []
 
 	def generate_attributes(self):
@@ -27,18 +36,21 @@ class tag:
 	def render(self,d=0):
 		"""generate the tag as a string with chidrens and text inside"""
 		r = ''
+		if self.type == 'html':
+			r+='<!DOCTYPE html>'
 		r+='<'+self.type
 		r+=self.generate_attributes()
 		r+='>\n'
-		for c in self.children:
-			r+='\t'*(d+1)
-			if type(c) == tag:
-				r+=c.render(d=d+1)
-			else:
-				r+=str(c)
-			r+='\n'
-		r+='\t'*d
-		r+='</'+self.type+'>'
+		if not self.emptytag:
+			for c in self.children:
+				r+='\t'*(d+1)
+				if type(c) == tag:
+					r+=c.render(d=d+1)
+				else:
+					r+=str(c)
+				r+='\n'
+			r+='\t'*d
+			r+='</'+self.type+'>'
 		return r
 
 	def add(self,toadd):
@@ -52,8 +64,13 @@ if __name__ == '__main__':
 	body = tag('body')
 	p1 = tag('p')
 
+
+
 	root.add(body)
 	p1.add('test')
+	p1.add(tag('br'))
+	p1.add('test')
 	body.add(p1)
+	
 
 	print(root.render())
