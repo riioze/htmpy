@@ -70,6 +70,13 @@ class tag:
 			r+='</'+self.type+'>'
 		return r
 
+	def save(self,path):
+		"""save the tag and all his children in an html file
+		/!\\ don't forget the .html at the end
+		""" 
+		with open(path,'w') as savefile:
+			savefile.write(self.render())
+
 	def add(self,toadd):
 		"""add a new children. It can be a tag or text"""
 		self.children.append(toadd)
@@ -101,6 +108,7 @@ class form(tag):
 			customattr = {}
 			labelTag = tag('label')
 			labelTag.add(label)
+			customattr['type'] = inputType
 			if name:
 				customattr['name'] = name
 			inputTag = tag('input',dict(attr, **customattr))
@@ -112,9 +120,6 @@ class form(tag):
 				self.add(inputTag)
 			self.add(tag('br'))
 			return labelTag,inputTag
-
-
-
 
 
 #############
