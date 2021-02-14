@@ -1,4 +1,6 @@
 
+
+
 #########
 # Const #
 #########
@@ -59,7 +61,7 @@ class tag:
 		if not self.emptytag:
 			for c in self.children:
 				r+='\t'*(d+1)
-				if type(c) == tag:
+				if type(c) != str:
 					r+=c.render(d=d+1)
 				else:
 					r+=str(c)
@@ -72,13 +74,56 @@ class tag:
 		"""add a new children. It can be a tag or text"""
 		self.children.append(toadd)
 
+class form(tag):
+	"""a html form"""
+	def __init__(self,PorG,action):
+		"""create a html form
+		PorG : method (post/get)
+		action : link to redirect when submit"""
+		attr = {}
+		attr['method']=PorG
+		attr['action']=action
+		tag.__init__(self,'form',attr)
+
+	def addInput(self,inputType,label=None,name=None,attr={}):
+		"""add a input with a label before 
+		(expept for button, submit and reset where the label is at the attribute value)"""
+		if inputType in ('submit','button','reset'):
+			customattr = {}
+			customattr['type'] = inputType
+			if label:
+				customattr['value'] = label
+			inputTag = tag('input',dict(attr, **customattr))
+			self.add(inputTag)
+			self.add(tag('br'))
+			return inputTag
+		else:
+			customattr = {}
+			labelTag = tag('label')
+			labelTag.add(label)
+			if name:
+				customattr['name'] = name
+			inputTag = tag('input',dict(attr, **customattr))
+			if inputType in ('checkbox','radio'):
+				self.add(inputTag)
+				self.add(labelTag)
+			else:
+				self.add(labelTag)
+				self.add(inputTag)
+			self.add(tag('br'))
+			return labelTag,inputTag
+
+
+
+
+
 #############
 # Fonctions #
 #############
 
-def createEmptyPage(title=None,header = False,footer=False):
+def createEmptyPage(title=None,header = False):
 	"""create an empty page with a head and a body
-	optinal : title,header,footer
+	optinal : title,header
 	returns the root, the head and the body and present : header and/or footer"""
 	root = tag('html')
 	head = tag('head')
@@ -94,18 +139,16 @@ def createEmptyPage(title=None,header = False,footer=False):
 		headerTag = tag('header')
 		body.add(headerTag)
 		r.append(headerTag)
-	if footer:
-		footerTag = tag('footer')
-		body.add(footerTag)
-		r.append(footerTag)
+
 	return tuple(r)
+
 
 ##################
 # body for tests #
 ##################
 if __name__ == '__main__':
 	
-	root,head,body,header,footer = createEmptyPage('testpage',True,True)
+	root,head,body,header = createEmptyPage('testpage',True)
 
 
 	print(root.render())
