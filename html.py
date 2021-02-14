@@ -1,6 +1,7 @@
 
-
-
+#########
+# Const #
+#########
 ETAGLIST = ['area',
 			'base',
 			'basefont',
@@ -14,9 +15,12 @@ ETAGLIST = ['area',
 			'link',
 			'meta',
 			'param',
-			'source']
+			'source'
+			]
 
-
+#########
+# Class #
+#########
 class tag:
 	"""tag element"""
 	def __init__(self,_type,attributes={}):
@@ -48,7 +52,7 @@ class tag:
 		"""generate the tag as a string with chidrens and text inside"""
 		r = ''
 		if self.type == 'html':
-			r+='<!DOCTYPE html>'
+			r+='<!DOCTYPE html>\n'
 		r+='<'+self.type
 		r+=self.generate_attributes()
 		r+='>\n'
@@ -68,23 +72,40 @@ class tag:
 		"""add a new children. It can be a tag or text"""
 		self.children.append(toadd)
 
+#############
+# Fonctions #
+#############
 
-
-# body for tests
-if __name__ == '__main__':
-	attributes = {}
-	attributes['lang'] = 'fr'
-	root = tag('html',attributes=attributes)
+def createEmptyPage(title=None,header = False,footer=False):
+	"""create an empty page with a head and a body
+	optinal : title,header,footer
+	returns the root, the head and the body and present : header and/or footer"""
+	root = tag('html')
+	head = tag('head')
 	body = tag('body')
-	p1 = tag('p')
-
-
-
+	root.add(head)
 	root.add(body)
-	p1.add('test')
-	p1.add(tag('br'))
-	p1.add('test')
-	body.add(p1)
+	r = [root,head,body]
+	if title:
+		titleTag = tag('title')
+		titleTag.add(title)
+		head.add(titleTag)
+	if header:
+		headerTag = tag('header')
+		body.add(headerTag)
+		r.append(headerTag)
+	if footer:
+		footerTag = tag('footer')
+		body.add(footerTag)
+		r.append(footerTag)
+	return tuple(r)
+
+##################
+# body for tests #
+##################
+if __name__ == '__main__':
+	
+	root,head,body,header,footer = createEmptyPage('testpage',True,True)
 
 
 	print(root.render())
