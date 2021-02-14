@@ -1,9 +1,20 @@
 
 
 
-with open('emptytags.txt','r') as etagfile:
-	ETAGLIST = etagfile.read()
-	ETAGLIST = ETAGLIST.split('\n')
+ETAGLIST = ['area',
+			'base',
+			'basefont',
+			'br',
+			'col',
+			'frame',
+			'hr',
+			'img',
+			'input',
+			'isindex',
+			'link',
+			'meta',
+			'param',
+			'source']
 
 
 class tag:
@@ -57,6 +68,9 @@ class tag:
 		"""add a new children. It can be a tag or text"""
 		self.children.append(toadd)
 
+
+
+# body for tests
 if __name__ == '__main__':
 	attributes = {}
 	attributes['lang'] = 'fr'
@@ -71,6 +85,6 @@ if __name__ == '__main__':
 	p1.add(tag('br'))
 	p1.add('test')
 	body.add(p1)
-	
+
 
 	print(root.render())
