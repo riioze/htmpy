@@ -80,6 +80,13 @@ class tag:
 	def add(self,toadd):
 		"""add a new children. It can be a tag or text"""
 		self.children.append(toadd)
+		return toadd
+
+	def addList(self,toadd):
+		"""add a list of elements at new children in order"""
+		for e in toadd:
+			self.add(e)
+		return tuple(toadd)
 
 class form(tag):
 	"""a html form"""
@@ -148,12 +155,28 @@ def createEmptyPage(title=None,header = False):
 	return tuple(r)
 
 
+def paragraph(text):
+	"""create a paragraphe with text
+	changing \\n by <br> tags"""
+	r = tag('p')
+	pliste = text.split('\n')
+	for e in pliste[:-1]:
+		r.add(e)
+		r.add(tag('br'))
+	r.add(pliste[-1])
+	return r
+
 ##################
 # body for tests #
 ##################
 if __name__ == '__main__':
 	
 	root,head,body,header = createEmptyPage('testpage',True)
+
+	text = 'zeqfhiscijqs\nqsdhkqcsniuqsi\nqsbqsjncw\n qsubuqsb'
+	body.addList([paragraph(text),tag('footer')])
+	root.save('test.html')
+
 
 
 	print(root.render())
