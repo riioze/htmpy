@@ -170,13 +170,4 @@ def paragraph(text):
 # body for tests #
 ##################
 if __name__ == '__main__':
-	
-	root,head,body,header = createEmptyPage('testpage',True)
-
-	text = 'zeqfhiscijqs\nqsdhkqcsniuqsi\nqsbqsjncw\n qsubuqsb'
-	body.addList([paragraph(text),tag('footer')])
-	root.save('test.html')
-
-
-
-	print(root.render())
+	pass
