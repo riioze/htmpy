@@ -21,7 +21,13 @@ class styleSheet:
 		for rule in self.rules:
 			r+=rule.render()+'\n'
 		return r
-
+	
+	def save(self,path):
+		""" to save the sheet in a file after aving render it
+		/!\\ don't forget the .css"""
+		with open(path,'w') as towrite:
+			towrite.write(self.render())
+			towrite.close()
 
 
 
@@ -53,6 +59,8 @@ class rule:
 		return r
 
 
+
+
 if __name__=='__main__':
 	s=styleSheet()
 	a = rule('border','blue','a','test','test')
@@ -60,4 +68,5 @@ if __name__=='__main__':
 	s.add(a)
 	s.add(b)
 	print(s.render())
+	s.save('style.css')
 
