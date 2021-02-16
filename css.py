@@ -59,23 +59,23 @@ class styleSheet:
 
 class mediaQuery(styleSheet):
 	""" object for the query """
-	def __init__(self,minwidth=None,maxwidth=None,orientation=None):
+	def __init__(self,ON,mediatype,conditions):
 		""" creates the query """
 		styleSheet.__init__(self)
-		self.minwidth = minwidth
-		self.maxwidth = maxwidth
-		self.orientation = orientation
+		self.ON = ON
+		self.mediatype = mediatype
+		if type(conditions) == str:
+			conditions = [conditions]
+		self.conditions = conditions
 
 	def render(self):
 		""" render the query """
-		minwidth,maxwidth,orientation = self.minwidth,self.maxwidth,self.orientation
-		r = '@media only if screen '
-		if minwidth:
-			r+='and (minwidth: '+minwidth+') '
-		if maxwidth:
-			r+='and (maxwidth: '+maxwidth+') '
-		if orientation:
-			r+='and (orientation: '+orientation+') '
+		
+		r = f'@media {self.ON} if {self.mediatype} '
+		
+		for condition in self.conditions:
+			r+='and ('+condition+') '
+
 		r+='{\n'
 		r+=styleSheet.render(self)
 		r+='}'
@@ -132,11 +132,7 @@ class rule:
 if __name__=='__main__':
 	s=styleSheet()
 	
-	a = rule('margin','2ppx',('a:hover'))
-	b = rule('color','green',('a:hover'))
-	c = rule('backgroud-color','blue',('p > a','p:hover'))
 
-	s.addList([a,b,c])
 
 	print(s.render())
 	s.save('style.css')
