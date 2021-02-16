@@ -126,12 +126,27 @@ class rule:
 		return r
 
 
+#############
+# functions #
+#############
 
+def createBatch(selectors,declarations):
+	""" to create a batch of rule with the same declarator 
+	selectors : a list or a tuple of selector(s)
+	declarations : a list of tuples (property,value)
+	"""
+	r = []
+	for _property,value in declarations:
+		r.append(rule(_property,value,selectors))
+	return r
 
 
 if __name__=='__main__':
 	s=styleSheet()
 	
+
+	b1 = createBatch(('a','div:hover'),[('color','green'),('background-color','blue')])
+	s.addList(b1)
 
 
 	print(s.render())
