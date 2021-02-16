@@ -11,8 +11,10 @@ class styleSheet:
 	def __init__(self):
 		"""creates the sheet"""
 		self.rules = []
+		self.medias = []
 	
 	def sort(self):
+		""" to sort all the rule and make blokcs of rule """
 		sortedDict = {}
 		for rule in self.rules:
 			if (rule.tag,rule.id,rule._class) in sortedDict.keys():
@@ -20,6 +22,10 @@ class styleSheet:
 			else:
 				sortedDict[(rule.tag,rule.id,rule._class)] = [(rule.property,rule.value)]
 		return sortedDict
+
+	def addQuery(self,query):
+		""" to add a media query """
+		self.medias.append(query)
 
 	def add(self,rule):
 		""" to add a rule to the sheet """
@@ -39,6 +45,8 @@ class styleSheet:
 		for Selector,declaration in ruleDict.items():
 			r+=rule.renderBlock(Selector,declaration)
 
+		for media in self.medias:
+			r+=media.render()
 		return r
 	
 	def save(self,path):
@@ -48,6 +56,31 @@ class styleSheet:
 			towrite.write(self.render())
 			towrite.close()
 
+
+class mediaQuery(styleSheet):
+	""" object for the query """
+	def __init__(self,minwidth=None,maxwidth=None,orientation=None):
+		""" creates the query """
+		styleSheet.__init__(self)
+		self.minwidth = minwidth
+		self.maxwidth = maxwidth
+		self.orientation = orientation
+
+	def render(self):
+		""" render the query """
+		minwidth,maxwidth,orientation = self.minwidth,self.maxwidth,self.orientation
+		r = '@media only if screen '
+		if minwidth:
+			r+='and (minwidth: '+minwidth+') '
+		if maxwidth:
+			r+='and (maxwidth: '+maxwidth+') '
+		if orientation:
+			r+='and (orientation: '+orientation+') '
+		r+='{\n'
+		r+=styleSheet.render(self)
+		r+='}'
+
+		return r
 
 
 class rule:
@@ -89,7 +122,11 @@ class rule:
 			r+='.'+_class
 		r+='\n{\n'
 
+
+
 		for _property,value in declarations:
+			if type(value) in (list,tuple):
+				value = ' '.join(list(value))
 			r+='\t'+_property+' : '+value+';\n'
 
 		r+='}\n'
@@ -104,7 +141,18 @@ if __name__=='__main__':
 	a = rule('border','blue','a','test')
 	b = rule('height','50%','p','p1','allp')
 	c = rule('color','green','a','test')
-	s.addList([a,b,c])
+	d = rule('margin',('30ppx','20ppx','4ppx','16ppx'),'p')
+
+	m1 = mediaQuery('768ppx','1400ppx','landscape')
+	s.addQuery(m1)
+
+	e = rule('border','red','p')
+	f = rule('margin','2ppx','a')
+	g = rule('height','100%','p')
+
+	m1.addList([e,f,g])
+
+	s.addList([a,b,c,d])
 	print(s.render())
 	print(s.sort())
 	s.save('style.css')
