@@ -1,4 +1,4 @@
-from css import *
+from htmpy.css import *
 
 ###########
 # Classes #
