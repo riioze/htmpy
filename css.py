@@ -17,10 +17,10 @@ class styleSheet:
 		""" to sort all the rule and make blokcs of rule """
 		sortedDict = {}
 		for rule in self.rules:
-			if (rule.tag,rule.id,rule._class) in sortedDict.keys():
-				sortedDict[(rule.tag,rule.id,rule._class)].append((rule.property,rule.value))
+			if rule.selectors in sortedDict.keys():
+				sortedDict[rule.selectors].append((rule.property,rule.value))
 			else:
-				sortedDict[(rule.tag,rule.id,rule._class)] = [(rule.property,rule.value)]
+				sortedDict[rule.selectors] = [(rule.property,rule.value)]
 		return sortedDict
 
 	def addQuery(self,query):
@@ -85,11 +85,13 @@ class mediaQuery(styleSheet):
 
 class rule:
 	""" object for the css rule """
-	def __init__(self,_property,value,tag=None,_id=None,_class=None):
-		""" creates the rule with the id,the class, the property and the value of the rule"""
-		self.tag = tag
-		self.id = _id
-		self._class = _class
+	def __init__(self,_property,value,selectors):
+		""" creates the rule with the the property, the value and the selectors of the rule of the rule 
+		selectors must be a list or a tuple
+		"""
+		if type(selectors)==str:
+			selectors = [selectors]
+		self.selectors = tuple(selectors)
 		self.property = _property
 		self.value = value
 
@@ -97,12 +99,8 @@ class rule:
 		"""render the rule alone"""
 		r = ''
 		
-		if self.tag:
-			r+=self.tag + ' '
-		if self.id:
-			r+='#'+self.id +' '
-		if self._class:
-			r+='.'+self._class
+		for selector in self.selectors:
+			r+=selectors+' '
 
 		r+='\n{\n\t'
 
@@ -110,16 +108,11 @@ class rule:
 		r+=str(self.value)+';\n}'
 		return r
 
-	def renderBlock(Selector,declarations):
+	def renderBlock(Selectors,declarations):
 		"""to render a block with a batch of declaration"""
-		tag,_id,_class = Selector
 		r = ''
-		if tag:
-			r+=tag+' '
-		if _id:
-			r+='#'+_id+' '
-		if _class:
-			r+='.'+_class
+		for selector in Selectors:
+			r+=selector+' '
 		r+='\n{\n'
 
 
@@ -138,22 +131,13 @@ class rule:
 
 if __name__=='__main__':
 	s=styleSheet()
-	a = rule('border','blue','a','test')
-	b = rule('height','50%','p','p1','allp')
-	c = rule('color','green','a','test')
-	d = rule('margin',('30ppx','20ppx','4ppx','16ppx'),'p')
+	
+	a = rule('margin','2ppx',('a:hover'))
+	b = rule('color','green',('a:hover'))
+	c = rule('backgroud-color','blue',('p > a','p:hover'))
 
-	m1 = mediaQuery('768ppx','1400ppx','landscape')
-	s.addQuery(m1)
+	s.addList([a,b,c])
 
-	e = rule('border','red','p')
-	f = rule('margin','2ppx','a')
-	g = rule('height','100%','p')
-
-	m1.addList([e,f,g])
-
-	s.addList([a,b,c,d])
 	print(s.render())
-	print(s.sort())
 	s.save('style.css')
 
